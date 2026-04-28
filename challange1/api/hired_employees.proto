@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package hr_poc;
+
+message HiredEmployees {
+    int64 id = 1;
+    string name = 2;
+    int64 datetime = 3;
+    int64 department_id = 4;
+    int64 job_id = 5;   
+}

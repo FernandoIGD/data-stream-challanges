@@ -1,3 +1,6 @@
 uvicorn
 fastapi
 pydantic
+google-cloud-bigquery-storage
+protobuf
+grpcio-tools

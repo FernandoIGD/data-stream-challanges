@@ -55,4 +55,3 @@ class JobRow(BaseModel):
 # Job batch model validation
 class JobsBatch(BaseModel):
     rows: list[dict] = Field(min_length=1, max_length=1000)
-

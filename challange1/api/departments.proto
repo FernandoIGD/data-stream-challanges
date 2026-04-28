@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package hr_poc;
+
+message Departments {
+    int64 id = 1;
+    string department = 2;
+}
