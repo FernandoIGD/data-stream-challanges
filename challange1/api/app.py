@@ -7,7 +7,7 @@ from rejects import write_rejects
 app = FastAPI()
 
 @app.post("/insert/hired_employees")
-async def insert_hired_employees(batch: HiredEmployeesBatch):
+def insert_hired_employees(batch: HiredEmployeesBatch):
     accepted: list[HiredEmployeesRow] = []
     rejected: list[dict] = []
     for raw in batch.rows:
@@ -28,7 +28,7 @@ async def insert_hired_employees(batch: HiredEmployeesBatch):
     }
 
 @app.post("/insert/departments")
-async def insert_departments(batch: DepartmentsBatch):
+def insert_departments(batch: DepartmentsBatch):
     accepted: list[DepartmentRow] = []
     rejected: list[dict] = []
     for raw in batch.rows:
@@ -49,7 +49,7 @@ async def insert_departments(batch: DepartmentsBatch):
     }
 
 @app.post("/insert/jobs")
-async def insert_jobs(batch: JobsBatch):
+def insert_jobs(batch: JobsBatch):
     accepted: list[JobRow] = []
     rejected: list[dict] = []
     for raw in batch.rows:
