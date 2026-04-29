@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from pydantic import ValidationError
 from models import HiredEmployeesBatch, HiredEmployeesRow, DepartmentRow, DepartmentsBatch, JobRow, JobsBatch
 from bq_writer import append_hired_employees, append_departments, append_jobs, hired_employees_to_proto, departments_to_proto, jobs_to_proto
+from rejects import write_rejects
 
 app = FastAPI()
 
@@ -17,7 +18,8 @@ async def insert_hired_employees(batch: HiredEmployeesBatch):
             rejected.append({"row": raw, "errors": e.errors()})
 
     serialized_rows = [hired_employees_to_proto(row) for row in accepted]
-    append_hired_employees(serialized_rows)    
+    append_hired_employees(serialized_rows) 
+    write_rejects("hired_employees", rejected, source="api_insert")   
     
     return {
         "accepted": len(accepted),
@@ -38,6 +40,7 @@ async def insert_departments(batch: DepartmentsBatch):
 
     serialized_rows = [departments_to_proto(row) for row in accepted]
     append_departments(serialized_rows)
+    write_rejects("departments", rejected, source="api_insert")
 
     return {
         "accepted": len(accepted),
@@ -58,6 +61,7 @@ async def insert_jobs(batch: JobsBatch):
 
     serialized_rows = [jobs_to_proto(row) for row in accepted]
     append_jobs(serialized_rows)
+    write_rejects("jobs", rejected, source="api_insert")
 
     return {
         "accepted": len(accepted),

@@ -19,6 +19,14 @@ def _to_micros(dt: datetime) -> int:
     return int(dt.timestamp() * 1_000_000)
 
 def hired_employees_to_proto(row: HiredEmployeesRow) -> bytes:
+    '''
+    Converts a HiredEmployeesRow Pydantic model instance to a serialized protobuf message.
+
+    Args:
+        row: An instance of HiredEmployeesRow containing the data to be converted.
+    Returns:
+        A bytes object representing the serialized protobuf message of type HiredEmployees.
+    '''
     return HiredEmployees(
         id=row.id,
         name=row.name,
@@ -28,12 +36,28 @@ def hired_employees_to_proto(row: HiredEmployeesRow) -> bytes:
     ).SerializeToString()
 
 def departments_to_proto (row: DepartmentRow) -> bytes:
+    '''
+    Converts a DepartmentRow Pydantic model instance to a serialized protobuf message.
+
+    Args:
+        row: An instance of DepartmentRow containing the data to be converted.
+    Returns:
+        A bytes object representing the serialized protobuf message of type Departments.
+    '''
     return Departments(
         id=row.id,
         department=row.department,
     ).SerializeToString()
 
 def jobs_to_proto (row: JobRow) -> bytes:
+    '''
+    Converts a JobRow Pydantic model instance to a serialized protobuf message.
+
+    Args:
+        row: An instance of JobRow containing the data to be converted.
+    Returns:
+        A bytes object representing the serialized protobuf message of type Jobs.
+    '''
     return Jobs(
         id=row.id,
         job=row.job,
