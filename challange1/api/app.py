@@ -1,4 +1,3 @@
-"""FastAPI application: routes, request/response wiring. Runtime-agnostic."""
 from fastapi import FastAPI
 from pydantic import ValidationError
 from models import HiredEmployeesBatch, HiredEmployeesRow, DepartmentRow, DepartmentsBatch, JobRow, JobsBatch
