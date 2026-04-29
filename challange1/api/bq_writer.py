@@ -53,12 +53,14 @@ def _proto_schema(message_class) -> types.ProtoSchema:
     return types.ProtoSchema(proto_descriptor=descriptor)
 
 
-def append_hired_employees(serialized_rows: list[bytes]):
+def _append_rows(table_name: str, message_class, serialized_rows: list[bytes]) -> None:
     '''
-    Appends serialized HiredEmployees rows to the BigQuery table using the Storage Write API.
+    Appends serialized protobuf rows to the specified BigQuery table using the Storage Write API.
 
     Args:
-        serialized_rows: A list of bytes, where each byte string is a serialized HiredEmployees protobuf message.
+        table_name: The name of the BigQuery table to which the rows will be appended (e.g., "hired_employees", "departments", "jobs").
+        message_class: The protobuf message class corresponding to the rows being appended (e.g., HiredEmployees, Departments, Jobs).
+        serialized_rows: A list of bytes, where each byte string is a serialized protobuf message of the specified message_class.
     Returns:
         None. The function sends the rows to BigQuery and does not return any value.
     '''
@@ -66,25 +68,34 @@ def append_hired_employees(serialized_rows: list[bytes]):
         return
     
     stream_name = (
-        _write_client.table_path(PROJECT_ID, DATASET_ID, "hired_employees")
-        +"/_default"
+        _write_client.table_path(PROJECT_ID, DATASET_ID, table_name)
+        +"/_default"    
     )
 
     request_template = types.AppendRowsRequest(
         write_stream=stream_name,
         proto_rows=types.AppendRowsRequest.ProtoData(
-            writer_schema= _proto_schema(HiredEmployees),
+            writer_schema = _proto_schema(message_class),
         ),
     )
 
     stream = writer.AppendRowsStream(_write_client, request_template)
     try:
-        batch = types.AppendRowsRequest(
-            proto_rows=types.AppendRowsRequest.ProtoData(
-                rows=types.ProtoRows(serialized_rows=serialized_rows),
-            ),
-        )
+        rows = types.ProtoRows(serialized_rows=serialized_rows)
+        proto_rows = types.AppendRowsRequest.ProtoData(rows=rows)
+        batch = types.AppendRowsRequest(proto_rows=proto_rows)
         future = stream.send(batch)
         future.result()
+
     finally:
         stream.close()
+
+
+def append_hired_employees(serialized_rows: list[bytes]) -> None:
+    _append_rows("hired_employees", HiredEmployees, serialized_rows)
+
+def append_departments(serialized_rows: list[bytes]) -> None:
+    _append_rows("departments", Departments, serialized_rows)
+
+def append_jobs(serialized_rows: list[bytes]) -> None:
+    _append_rows("jobs", Jobs, serialized_rows)
