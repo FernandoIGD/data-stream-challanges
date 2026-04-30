@@ -2,5 +2,6 @@ fastapi
 pydantic
 google-cloud-bigquery
 google-cloud-bigquery-storage
+google-cloud-storage
 protobuf
 uvicorn[standard]

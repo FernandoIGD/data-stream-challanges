@@ -1,10 +1,13 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import ValidationError
 from models import HiredEmployeesBatch, HiredEmployeesRow, DepartmentRow, DepartmentsBatch, JobRow, JobsBatch
 from bq_writer import append_hired_employees, append_departments, append_jobs, hired_employees_to_proto, departments_to_proto, jobs_to_proto
 from rejects import write_rejects
+from restore import restore_table, latest_run_id
 
 app = FastAPI()
+
+ALLOWED_TABLES = {"hired_employees", "departments", "jobs"}
 
 @app.post("/insert/hired_employees")
 def insert_hired_employees(batch: HiredEmployeesBatch):
@@ -67,4 +70,16 @@ def insert_jobs(batch: JobsBatch):
         "accepted": len(accepted),
         "rejected": len(rejected),
         "rejects": rejected,
+    }
+
+@app.post("/restore/{table}")
+def restore(table: str, run_id: str | None = None):
+    if table not in ALLOWED_TABLES:
+        raise HTTPException(status_code=400, detail=f"unknown table: {table}")
+    resolved_run_id = run_id or latest_run_id(table)
+    rows = restore_table(table, resolved_run_id)
+    return {
+        "table": table,
+        "run_id": resolved_run_id,
+        "rows_loaded": rows,
     }
