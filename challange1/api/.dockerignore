@@ -1,0 +1,30 @@
+# secrets
+.env
+.env.*
+*.json
+
+# python noise
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+.pytest_cache/
+*.proto
+
+# editor / OS noise
+.vscode/
+.idea/
+.DS_Store
+
+# git metadata 
+.git/
+.gitignore
+
+# docker itself
+Dockerfile
+.dockerignore
+
+# project-specific
+*.md
+*.pdf

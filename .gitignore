@@ -41,3 +41,5 @@ target/
 out/
 release/
 debug/
+
+random.txt

@@ -1,0 +1,17 @@
+.env
+.env.*
+*.json
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+.pytest_cache/
+*.proto
+.vscode/
+.idea/
+.DS_Store
+.git/
+.gitignore
+*.md
+*.pdf
