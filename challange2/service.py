@@ -2,7 +2,19 @@ from google.cloud import bigquery
 
 _client = bigquery.Client()
 
-def get_employees_for_each_job() -> dict:
+def get_employees_for_each_job() -> list[dict]:
+    '''
+    This function returns a list of dictionaries, where each dictionary contains the department, 
+    job, and the number of employees hired in each quarter of 2021. The data is retrieved from 
+    the BigQuery database using a SQL query that joins the hired_employees, departments, and jobs tables. 
+    The query counts the number of employees hired in each quarter and groups the results by department and job.
+
+    Args:
+        None
+    Returns:
+        list[dict]: A list of dictionaries, where each dictionary contains the department, job,
+        and the number of employees hired in each quarter of 2021.
+    '''
     query = """
             SELECT d.department, j.job,
             COUNTIF(e.datetime >= '2021-01-01' AND e.datetime < '2021-04-01') AS q1,
@@ -16,8 +28,21 @@ def get_employees_for_each_job() -> dict:
             GROUP BY d.department, j.job
             ORDER BY d.department, j.job
             """
+    return [dict(row) for row in _client.query(query).result()]
     
-def list_ids_names_numbers() -> dict:
+def list_ids_names_numbers() -> list[dict]:
+    '''
+    This function returns a list of dictionaries, where each dictionary contains the department id,
+    department name, and the number of employees hired in 2021 that are greater than the mean of hired employees 
+    for all departments. The data is retrieved from the BigQuery database using a SQL query that joins the 
+    hired_employees and departments tables.
+
+    Args:
+        None
+    Returns:
+        list[dict]: A list of dictionaries, where each dictionary contains the department id,
+        department name, and the number of employees hired in 2021.
+    '''
     query = """
             WITH table1 AS (
             SELECT COUNT(id) as emp_hired FROM `dataengineer-494617.hr_poc.hired_employees`
@@ -37,3 +62,5 @@ def list_ids_names_numbers() -> dict:
             GROUP BY d.id, d.department HAVING hired > (SELECT avg_hired FROM table3)
             ORDER BY hired DESC
             """
+
+    return [dict(row) for row in _client.query(query).result()]
